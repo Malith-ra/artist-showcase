@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Center, Container, Heading, Spinner, VStack } from '@chakra-ui/react'
 import debounce from 'lodash.debounce'
 import SearchBar from './SearchBar'
@@ -9,13 +9,22 @@ import AlbumList from './AlbumList'
 import { getAlbumsByArtist } from '@/lib/lastfm'
 import { LastFMAlbum } from '@/types/album'
 
-export default function AlbumsClient() {
+interface AlbumsClientProps {
+  initialAlbums: LastFMAlbum[]
+  initialTotalPages: number
+}
+
+export default function AlbumsClient({
+  initialAlbums,
+  initialTotalPages,
+}: Readonly<AlbumsClientProps>) {
   const [artist, setArtist] = useState<string>('Eminem')
-  const [albums, setAlbums] = useState<LastFMAlbum[]>([])
+  const [albums, setAlbums] = useState<LastFMAlbum[]>(initialAlbums)
   const [loading, setLoading] = useState<boolean>(false)
   const [page, setPage] = useState<number>(1)
-  const [hasMore, setHasMore] = useState<boolean>(true)
+  const [hasMore, setHasMore] = useState<boolean>(initialTotalPages > 1)
   const [loadingMore, setLoadingMore] = useState<boolean>(false)
+  const isInitialMount = useRef(true)
 
   // Typed debounce function
   const debouncedFetch = useMemo(
@@ -35,7 +44,7 @@ export default function AlbumsClient() {
         }
 
         setLoading(false)
-      }, 600),
+      }, 2000),
     [],
   )
 
@@ -59,8 +68,12 @@ export default function AlbumsClient() {
     setLoadingMore(false)
   }
 
-  // Trigger on artist change
+  // Trigger on artist change (skip initial render since we have SSR data)
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
     debouncedFetch(artist)
   }, [artist, debouncedFetch])
 
