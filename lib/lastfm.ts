@@ -7,7 +7,7 @@ import {
   LastFMSearchAlbum,
 } from '@/types/album'
 
-const API_KEY = 'd732731be2f5f0ec4b10e5a3607d7090'
+const API_KEY = process.env.NEXT_PUBLIC_LASTFM_API_KEY
 
 export async function getAlbumsByArtist(
   artist: string,
@@ -44,7 +44,6 @@ export async function getAlbumInfo(artist: string, album: string) {
 
   const data = await res.json()
 
-  // Sometimes API returns: { album: {} }
   if (!data.album || Object.keys(data.album).length === 0) {
     return null
   }
