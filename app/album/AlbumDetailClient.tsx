@@ -97,6 +97,7 @@ export default function AlbumDetailClient({
                     album: albumInfo.name,
                     image: coverImage,
                     url: track.url,
+                    duration: track.duration,
                   })
                 }
               }

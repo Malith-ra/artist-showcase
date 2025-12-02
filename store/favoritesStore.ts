@@ -10,6 +10,7 @@ export interface FavoriteTrack {
   album?: string
   image?: string
   url?: string
+  duration?: string
 }
 
 interface FavoritesState {
