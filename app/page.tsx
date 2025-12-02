@@ -1,10 +1,10 @@
-import { Button, HStack } from '@chakra-ui/react'
+'use client'
 
-export default function Home() {
-  return (
-    <HStack>
-      <Button>Click me</Button>
-      <Button>Click me</Button>
-    </HStack>
-  )
+import { useAppStore } from '@/store/useAppStore'
+
+export default function Counter() {
+  const count = useAppStore((s) => s.count)
+  const increase = useAppStore((s) => s.increase)
+
+  return <button onClick={increase}>Count: {count}</button>
 }
