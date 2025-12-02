@@ -45,3 +45,19 @@ export interface LastFMAlbum {
   ['@attr']?: LastFMRank
   releasedate?: string // Added for client-side enrichment
 }
+
+export interface LastFMTrack {
+  name: string
+  duration?: string
+  url?: string
+}
+
+export interface LastFMAlbumInfo {
+  name: string
+  artist: string
+  listeners: string
+  playcount: string
+  image?: Array<{ '#text': string; size: string }>
+  tracks?: { track: LastFMTrack[] }
+  wiki?: { summary: string }
+}
