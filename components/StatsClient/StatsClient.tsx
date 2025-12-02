@@ -1,24 +1,24 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
-import {
-  Container,
-  Heading,
-  VStack,
-  Input,
-  Button,
-  Box,
-  Text,
-  HStack,
-  Image,
-  AspectRatio,
-  Center,
-  Spinner,
-} from '@chakra-ui/react'
 import { getAlbumInfo } from '@/lib/lastfm'
 import { LastFMAlbumInfo } from '@/types/album'
+import {
+  AspectRatio,
+  Box,
+  Button,
+  Center,
+  Container,
+  Heading,
+  HStack,
+  Image,
+  Input,
+  Spinner,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
 import { LuSearch } from 'react-icons/lu'
-import PlayCountGraph from './PlayCountGraph'
+import PlayCountGraph from '../PlayCountGraph/PlayCountGraph'
 
 export default function StatsClient() {
   const [artist, setArtist] = useState('Eminem')

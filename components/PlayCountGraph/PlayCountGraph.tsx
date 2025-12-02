@@ -1,33 +1,17 @@
 'use client'
 
-import { LastFMTrack } from '@/types/album'
+import { CustomTooltipProps, PlayCountGraphProps } from '@/types/playCount'
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
 } from 'recharts'
-import styles from './PlayCountGraph.module.css'
-
-interface PlayCountGraphProps {
-  tracks: LastFMTrack[]
-}
-
-interface CustomTooltipProps {
-  active?: boolean
-  payload?: Array<{
-    value: number
-    payload: {
-      name: string
-      playcount: number
-      duration?: string
-    }
-  }>
-}
+import styles from '../../styles/PlayCountGraph.module.css'
 
 const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
   if (active && payload?.length) {
