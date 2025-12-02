@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import debounce from 'lodash.debounce'
 import {
   Container,
   Heading,
@@ -25,73 +26,70 @@ export default function SearchClient() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null)
 
-  const performSearch = async (searchQuery: string, pageNum: number = 1) => {
-    if (!searchQuery.trim()) {
-      setTracks([])
-      setAlbums([])
-      return
-    }
+  const performSearch = useCallback(
+    async (searchQuery: string, pageNum: number = 1) => {
+      if (!searchQuery.trim()) {
+        setTracks([])
+        setAlbums([])
+        return
+      }
 
-    if (pageNum === 1) {
-      setLoading(true)
-    } else {
-      setLoadingMore(true)
-    }
-
-    try {
-      if (searchType === 'tracks') {
-        const { tracks: newTracks, totalPages } = await searchTracks(
-          searchQuery,
-          pageNum,
-        )
-        if (pageNum === 1) {
-          setTracks(newTracks)
-        } else {
-          setTracks((prev) => [...prev, ...newTracks])
-        }
-        setHasMore(pageNum < totalPages)
+      if (pageNum === 1) {
+        setLoading(true)
       } else {
-        const { albums: newAlbums, totalPages } = await searchAlbums(
-          searchQuery,
-          pageNum,
-        )
-        if (pageNum === 1) {
-          setAlbums(newAlbums)
+        setLoadingMore(true)
+      }
+
+      try {
+        if (searchType === 'tracks') {
+          const { tracks: newTracks, totalPages } = await searchTracks(
+            searchQuery,
+            pageNum,
+          )
+          if (pageNum === 1) {
+            setTracks(newTracks)
+          } else {
+            setTracks((prev) => [...prev, ...newTracks])
+          }
+          setHasMore(pageNum < totalPages)
         } else {
-          setAlbums((prev) => [...prev, ...newAlbums])
+          const { albums: newAlbums, totalPages } = await searchAlbums(
+            searchQuery,
+            pageNum,
+          )
+          if (pageNum === 1) {
+            setAlbums(newAlbums)
+          } else {
+            setAlbums((prev) => [...prev, ...newAlbums])
+          }
+          setHasMore(pageNum < totalPages)
         }
-        setHasMore(pageNum < totalPages)
+        setPage(pageNum)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+        setLoadingMore(false)
       }
-      setPage(pageNum)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-      setLoadingMore(false)
-    }
-  }
+    },
+    [searchType],
+  )
 
-  // Debounced search
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchQuery: string) => {
+        if (searchQuery) {
+          setPage(1)
+          performSearch(searchQuery, 1)
+        }
+      }, 1500),
+    [performSearch],
+  )
+
   useEffect(() => {
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current)
-    }
-
-    debounceTimer.current = setTimeout(() => {
-      if (query) {
-        setPage(1)
-        performSearch(query, 1)
-      }
-    }, 600)
-
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current)
-      }
-    }
-  }, [query, searchType])
+    debouncedSearch(query)
+  }, [query, debouncedSearch])
 
   const loadMore = () => {
     performSearch(query, page + 1)
