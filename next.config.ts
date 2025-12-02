@@ -1,10 +1,15 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
-    experimental: {
-    optimizePackageImports: ["@chakra-ui/react"],
+const nextConfig = {
+  experimental: {
+    optimizePackageImports: ['@chakra-ui/react'],
   },
-};
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lastfm.freetls.fastly.net',
+      },
+    ],
+  },
+}
 
-export default nextConfig;
+module.exports = nextConfig
