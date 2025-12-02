@@ -4,12 +4,22 @@ import { useEffect, useState, useMemo } from 'react'
 import { LastFMAlbum } from '@/types/album'
 import { useAlbumStore } from '@/store/albumStore'
 import AlbumCard from './AlbumCard'
-import { SimpleGrid, Spinner, Center } from '@chakra-ui/react'
+import { SimpleGrid, Spinner, Center, Button, VStack } from '@chakra-ui/react'
 import { getAlbumInfo } from '@/lib/lastfm'
+
+interface AlbumListProps {
+  albums: LastFMAlbum[]
+  onLoadMore?: () => void
+  hasMore?: boolean
+  loadingMore?: boolean
+}
 
 export default function AlbumList({
   albums,
-}: Readonly<{ albums: LastFMAlbum[] }>) {
+  onLoadMore,
+  hasMore = false,
+  loadingMore = false,
+}: Readonly<AlbumListProps>) {
   const sortBy = useAlbumStore((s) => s.sortBy)
   const [enrichedAlbums, setEnrichedAlbums] = useState<LastFMAlbum[]>([])
   const [loading, setLoading] = useState(false)
@@ -71,10 +81,26 @@ export default function AlbumList({
   }
 
   return (
-    <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} gap={6} mt={4}>
-      {sorted.map((album) => (
-        <AlbumCard key={album.mbid || album.url} album={album} />
-      ))}
-    </SimpleGrid>
+    <VStack gap={6} align="stretch">
+      <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} gap={6} mt={4}>
+        {sorted.map((album) => (
+          <AlbumCard key={album.mbid || album.url} album={album} />
+        ))}
+      </SimpleGrid>
+
+      {hasMore && sorted?.length > 0 && onLoadMore && (
+        <Center mt={6}>
+          <Button
+            onClick={onLoadMore}
+            colorScheme="purple"
+            size="lg"
+            loading={loadingMore}
+            loadingText="Loading more..."
+          >
+            Load More
+          </Button>
+        </Center>
+      )}
+    </VStack>
   )
 }

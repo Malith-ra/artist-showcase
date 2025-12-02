@@ -16,6 +16,12 @@ export interface AlbumAttributes {
 export interface LastFMTopAlbumsResponse {
   topalbums: {
     album: LastFMAlbum[]
+    '@attr'?: {
+      page: string
+      perPage: string
+      total: string
+      totalPages: string
+    }
   }
 }
 

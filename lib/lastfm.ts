@@ -4,8 +4,10 @@ const API_KEY = 'd732731be2f5f0ec4b10e5a3607d7090'
 
 export async function getAlbumsByArtist(
   artist: string,
-): Promise<LastFMAlbum[]> {
-  const url = `https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=${artist}&limit=50&api_key=${API_KEY}&format=json`
+  page: number = 1,
+): Promise<{ albums: LastFMAlbum[]; totalPages: number }> {
+  const limit = 50
+  const url = `https://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist=${encodeURIComponent(artist)}&limit=${limit}&page=${page}&api_key=${API_KEY}&format=json`
 
   const res = await fetch(url, { cache: 'no-store' })
 
@@ -14,7 +16,14 @@ export async function getAlbumsByArtist(
   }
 
   const data: LastFMTopAlbumsResponse = await res.json()
-  return data.topalbums.album.slice(0, 50) // ensure 50 items
+  const totalPages = Math.ceil(
+    Number.parseInt(data.topalbums['@attr']?.total || '0') / limit,
+  )
+
+  return {
+    albums: data.topalbums.album || [],
+    totalPages,
+  }
 }
 
 export async function getAlbumInfo(artist: string, album: string) {

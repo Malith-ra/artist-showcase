@@ -9,14 +9,13 @@ import AlbumList from './AlbumList'
 import { getAlbumsByArtist } from '@/lib/lastfm'
 import { LastFMAlbum } from '@/types/album'
 
-interface AlbumsClientProps {
-  initialAlbums: LastFMAlbum[]
-}
-
-export default function AlbumsClient({ initialAlbums }: AlbumsClientProps) {
+export default function AlbumsClient() {
   const [artist, setArtist] = useState<string>('Eminem')
-  const [albums, setAlbums] = useState<LastFMAlbum[]>(initialAlbums)
+  const [albums, setAlbums] = useState<LastFMAlbum[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(1)
+  const [hasMore, setHasMore] = useState<boolean>(true)
+  const [loadingMore, setLoadingMore] = useState<boolean>(false)
 
   // Typed debounce function
   const debouncedFetch = useMemo(
@@ -25,10 +24,12 @@ export default function AlbumsClient({ initialAlbums }: AlbumsClientProps) {
         if (!value.trim()) return
 
         setLoading(true)
+        setPage(1)
 
         try {
-          const data: LastFMAlbum[] = await getAlbumsByArtist(value)
+          const { albums: data, totalPages } = await getAlbumsByArtist(value, 1)
           setAlbums(data)
+          setHasMore(totalPages > 1)
         } catch (err) {
           console.error(err)
         }
@@ -38,11 +39,29 @@ export default function AlbumsClient({ initialAlbums }: AlbumsClientProps) {
     [],
   )
 
+  // Load more function
+  const loadMore = async () => {
+    if (loadingMore || !hasMore) return
+
+    setLoadingMore(true)
+    try {
+      const nextPage = page + 1
+      const { albums: newAlbums, totalPages } = await getAlbumsByArtist(
+        artist,
+        nextPage,
+      )
+      setAlbums((prev) => [...prev, ...newAlbums])
+      setPage(nextPage)
+      setHasMore(nextPage < totalPages)
+    } catch (err) {
+      console.error(err)
+    }
+    setLoadingMore(false)
+  }
+
   // Trigger on artist change
   useEffect(() => {
-    if (artist !== 'Eminem') {
-      debouncedFetch(artist)
-    }
+    debouncedFetch(artist)
   }, [artist, debouncedFetch])
 
   // Cleanup
@@ -61,10 +80,15 @@ export default function AlbumsClient({ initialAlbums }: AlbumsClientProps) {
 
       {loading ? (
         <Center mt={10}>
-          <Spinner size="xl" mt={10} />{' '}
+          <Spinner size="xl" />
         </Center>
       ) : (
-        <AlbumList albums={albums} />
+        <AlbumList
+          albums={albums}
+          onLoadMore={loadMore}
+          hasMore={hasMore}
+          loadingMore={loadingMore}
+        />
       )}
     </Container>
   )
