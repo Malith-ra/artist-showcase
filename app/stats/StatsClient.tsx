@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import {
   Container,
   Heading,
@@ -21,8 +21,8 @@ import { LuSearch } from 'react-icons/lu'
 import PlayCountGraph from './PlayCountGraph'
 
 export default function StatsClient() {
-  const [artist, setArtist] = useState('')
-  const [albumName, setAlbumName] = useState('')
+  const [artist, setArtist] = useState('Eminem')
+  const [albumName, setAlbumName] = useState('The Way I Am')
   const [albumInfo, setAlbumInfo] = useState<LastFMAlbumInfo | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -57,6 +57,10 @@ export default function StatsClient() {
       handleSearch()
     }
   }
+
+  useEffect(() => {
+    handleSearch()
+  }, [])
 
   const coverImage =
     albumInfo?.image?.find((img) => img.size === 'extralarge')?.['#text'] || ''

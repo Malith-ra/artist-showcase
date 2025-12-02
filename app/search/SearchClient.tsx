@@ -17,7 +17,7 @@ import TrackList from './TrackList'
 import AlbumSearchList from './AlbumSearchList'
 
 export default function SearchClient() {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState('The Way I Am')
   const [searchType, setSearchType] = useState<'tracks' | 'albums'>('tracks')
   const [tracks, setTracks] = useState<LastFMSearchTrack[]>([])
   const [albums, setAlbums] = useState<LastFMSearchAlbum[]>([])

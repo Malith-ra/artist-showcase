@@ -13,7 +13,7 @@ export default function Navigation() {
     <Box bg="gray.600" color="white" py={4} mb={6}>
       <Container maxW="container.xl">
         <HStack gap={6}>
-          <Link href="/">
+          {/* <Link href="/">
             <Box
               fontWeight={isActive('/') ? 'bold' : 'normal'}
               _hover={{ textDecoration: 'underline' }}
@@ -21,7 +21,7 @@ export default function Navigation() {
             >
               Home
             </Box>
-          </Link>
+          </Link> */}
           <Link href="/albums">
             <Box
               fontWeight={isActive('/albums') ? 'bold' : 'normal'}
