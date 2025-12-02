@@ -61,3 +61,51 @@ export interface LastFMAlbumInfo {
   tracks?: { track: LastFMTrack[] }
   wiki?: { summary: string }
 }
+
+export interface LastFMSearchTrack {
+  name: string
+  artist: string
+  url: string
+  listeners: string
+  image: LastFMImage[]
+  mbid?: string
+}
+
+export interface LastFMSearchAlbum {
+  name: string
+  artist: string
+  url: string
+  image: LastFMImage[]
+  mbid?: string
+  streamable?: string
+}
+
+export interface LastFMTrackSearchResponse {
+  results: {
+    trackmatches: {
+      track: LastFMSearchTrack[]
+    }
+    '@attr': {
+      for: string
+      page: string
+      perPage: string
+      totalResults: string
+      total: string
+    }
+  }
+}
+
+export interface LastFMAlbumSearchResponse {
+  results: {
+    albummatches: {
+      album: LastFMSearchAlbum[]
+    }
+    '@attr': {
+      for: string
+      page: string
+      perPage: string
+      totalResults: string
+      total: string
+    }
+  }
+}
