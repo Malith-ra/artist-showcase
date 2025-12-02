@@ -22,7 +22,7 @@ export default function AlbumCard({ album }: Props) {
 
   return (
     <Link
-      href={`/albums/${encodeURIComponent(album.artist.name)}/${encodeURIComponent(album.name)}`}
+      href={`/album?artist=${encodeURIComponent(album.artist.name)}&album=${encodeURIComponent(album.name)}`}
     >
       <Box
         borderWidth="1px"

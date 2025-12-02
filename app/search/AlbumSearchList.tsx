@@ -11,6 +11,7 @@ import {
   Center,
   AspectRatio,
 } from '@chakra-ui/react'
+import Link from 'next/link'
 
 interface AlbumSearchListProps {
   albums: LastFMSearchAlbum[]
@@ -33,35 +34,40 @@ export default function AlbumSearchList({
             album.image.find((img) => img.size === 'large')?.['#text'] || ''
 
           return (
-            <Box
+            <Link
               key={`${album.mbid || album.url}-${index}`}
-              borderWidth="1px"
-              rounded="lg"
-              overflow="hidden"
-              shadow="sm"
-              _hover={{ shadow: 'xl', transform: 'scale(1.03)' }}
-              transition="0.2s"
-              bg="white"
-              p={3}
+              href={`/album?artist=${encodeURIComponent(album.artist)}&album=${encodeURIComponent(album.name)}`}
             >
-              <AspectRatio ratio={1} w="100%" mb={4}>
-                <Image
-                  src={cover}
-                  alt={album.name}
-                  borderRadius="md"
-                  objectFit="cover"
-                />
-              </AspectRatio>
+              <Box
+                borderWidth="1px"
+                rounded="lg"
+                overflow="hidden"
+                shadow="sm"
+                _hover={{ shadow: 'xl', transform: 'scale(1.03)' }}
+                transition="0.2s"
+                bg="white"
+                p={3}
+                h="100%"
+              >
+                <AspectRatio ratio={1} w="100%" mb={4}>
+                  <Image
+                    src={cover}
+                    alt={album.name}
+                    borderRadius="md"
+                    objectFit="cover"
+                  />
+                </AspectRatio>
 
-              <VStack align="start" gap={1}>
-                <Text fontSize="lg" fontWeight="semibold" lineClamp={2}>
-                  {album.name}
-                </Text>
-                <Text fontSize="sm" color="gray.600" lineClamp={1}>
-                  {album.artist}
-                </Text>
-              </VStack>
-            </Box>
+                <VStack align="start" gap={1}>
+                  <Text fontSize="lg" fontWeight="semibold" lineClamp={2}>
+                    {album.name}
+                  </Text>
+                  <Text fontSize="sm" color="gray.600" lineClamp={1}>
+                    {album.artist}
+                  </Text>
+                </VStack>
+              </Box>
+            </Link>
           )
         })}
       </SimpleGrid>

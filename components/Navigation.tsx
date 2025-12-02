@@ -40,6 +40,15 @@ export default function Navigation() {
               Search
             </Box>
           </Link>
+          <Link href="/favorites">
+            <Box
+              fontWeight={isActive('/favorites') ? 'bold' : 'normal'}
+              _hover={{ textDecoration: 'underline' }}
+              cursor="pointer"
+            >
+              Favorites
+            </Box>
+          </Link>
         </HStack>
       </Container>
     </Box>
