@@ -37,4 +37,5 @@ export interface LastFMAlbum {
   artist: LastFMArtistInfo
   image: LastFMImage[]
   ['@attr']?: LastFMRank
+  releasedate?: string // Added for client-side enrichment
 }

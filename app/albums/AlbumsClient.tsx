@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
-import { Container, Heading, Spinner, VStack } from '@chakra-ui/react'
+import { Center, Container, Heading, Spinner, VStack } from '@chakra-ui/react'
 import debounce from 'lodash.debounce'
 import SearchBar from './SearchBar'
 import SortBar from './SortBar'
@@ -59,7 +59,13 @@ export default function AlbumsClient({ initialAlbums }: AlbumsClientProps) {
         <SortBar />
       </VStack>
 
-      {loading ? <Spinner size="xl" mt={10} /> : <AlbumList albums={albums} />}
+      {loading ? (
+        <Center mt={10}>
+          <Spinner size="xl" mt={10} />{' '}
+        </Center>
+      ) : (
+        <AlbumList albums={albums} />
+      )}
     </Container>
   )
 }

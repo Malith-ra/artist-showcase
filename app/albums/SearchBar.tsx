@@ -23,7 +23,6 @@ export default function SearchBar({
         placeholder="Search artist..."
         size="lg"
         bg="white"
-        borderRadius="full"
       />
     </div>
   )
