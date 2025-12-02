@@ -10,6 +10,7 @@ import {
   VStack,
   HStack,
   Separator,
+  Container,
 } from '@chakra-ui/react'
 
 interface AlbumPageProps {
@@ -35,7 +36,7 @@ export default async function AlbumPage(props: AlbumPageProps) {
   const tracks: LastFMTrack[] = data.tracks?.track ?? []
 
   return (
-    <Box maxW="5xl" mx="auto" py={10} px={4}>
+    <Container maxW="container.xl" py={10}>
       {/* Header section */}
       <Flex gap={8} align="flex-start" flexDir={{ base: 'column', md: 'row' }}>
         {/* Album cover */}
@@ -117,6 +118,6 @@ export default async function AlbumPage(props: AlbumPageProps) {
           )
         })}
       </VStack>
-    </Box>
+    </Container>
   )
 }
