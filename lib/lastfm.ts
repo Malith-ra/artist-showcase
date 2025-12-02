@@ -7,7 +7,7 @@ import {
   LastFMSearchAlbum,
 } from '@/types/album'
 
-const API_KEY = process.env.LASTFM_API_KEY
+const API_KEY = process.env.NEXT_PUBLIC_LASTFM_API_KEY
 
 export async function getAlbumsByArtist(
   artist: string,
