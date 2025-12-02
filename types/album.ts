@@ -50,6 +50,10 @@ export interface LastFMTrack {
   name: string
   duration?: string
   url?: string
+  playcount?: string
+  '@attr'?: {
+    rank: string
+  }
 }
 
 export interface LastFMAlbumInfo {

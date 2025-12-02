@@ -49,6 +49,15 @@ export default function Navigation() {
               Favorites
             </Box>
           </Link>
+          <Link href="/stats">
+            <Box
+              fontWeight={isActive('/stats') ? 'bold' : 'normal'}
+              _hover={{ textDecoration: 'underline' }}
+              cursor="pointer"
+            >
+              Stats
+            </Box>
+          </Link>
         </HStack>
       </Container>
     </Box>
