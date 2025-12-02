@@ -1,4 +1,11 @@
-import { LastFMTopAlbumsResponse, LastFMAlbum } from '@/types/album'
+import {
+  LastFMTopAlbumsResponse,
+  LastFMAlbum,
+  LastFMTrackSearchResponse,
+  LastFMAlbumSearchResponse,
+  LastFMSearchTrack,
+  LastFMSearchAlbum,
+} from '@/types/album'
 
 const API_KEY = 'd732731be2f5f0ec4b10e5a3607d7090'
 
@@ -43,4 +50,54 @@ export async function getAlbumInfo(artist: string, album: string) {
   }
 
   return data.album
+}
+
+export async function searchTracks(
+  query: string,
+  page: number = 1,
+): Promise<{ tracks: LastFMSearchTrack[]; totalPages: number }> {
+  const limit = 30
+  const url = `https://ws.audioscrobbler.com/2.0/?method=track.search&track=${encodeURIComponent(query)}&limit=${limit}&page=${page}&api_key=${API_KEY}&format=json`
+
+  const res = await fetch(url, { cache: 'no-store' })
+
+  if (!res.ok) {
+    throw new Error('Failed to search tracks')
+  }
+
+  const data: LastFMTrackSearchResponse = await res.json()
+  const totalResults = Number.parseInt(
+    data.results['@attr']?.totalResults || '0',
+  )
+  const totalPages = Math.ceil(totalResults / limit)
+
+  return {
+    tracks: data.results.trackmatches?.track || [],
+    totalPages,
+  }
+}
+
+export async function searchAlbums(
+  query: string,
+  page: number = 1,
+): Promise<{ albums: LastFMSearchAlbum[]; totalPages: number }> {
+  const limit = 30
+  const url = `https://ws.audioscrobbler.com/2.0/?method=album.search&album=${encodeURIComponent(query)}&limit=${limit}&page=${page}&api_key=${API_KEY}&format=json`
+
+  const res = await fetch(url, { cache: 'no-store' })
+
+  if (!res.ok) {
+    throw new Error('Failed to search albums')
+  }
+
+  const data: LastFMAlbumSearchResponse = await res.json()
+  const totalResults = Number.parseInt(
+    data.results['@attr']?.totalResults || '0',
+  )
+  const totalPages = Math.ceil(totalResults / limit)
+
+  return {
+    albums: data.results.albummatches?.album || [],
+    totalPages,
+  }
 }
