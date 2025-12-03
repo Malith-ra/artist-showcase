@@ -1,31 +1,23 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useFavoritesStore } from '@/store/favoritesStore'
 import {
-  Container,
-  Heading,
-  VStack,
   Box,
-  Text,
-  HStack,
-  Image,
   Button,
   Center,
+  Container,
+  Heading,
+  HStack,
+  IconButton,
+  Image,
   Input,
   Table,
-  IconButton,
-  DialogRoot,
-  DialogBackdrop,
-  DialogContent,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  DialogTitle,
-  DialogActionTrigger,
+  Text,
+  VStack,
 } from '@chakra-ui/react'
-import { useFavoritesStore } from '@/store/favoritesStore'
-import { LuHeart, LuSearch } from 'react-icons/lu'
 import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import { LuHeart, LuSearch } from 'react-icons/lu'
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog'
 
 export default function FavoritesClient() {
@@ -75,17 +67,6 @@ export default function FavoritesClient() {
 
   return (
     <Container maxW="container.xl" py={10}>
-      <ConfirmDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        title="Clear All Favorites"
-        description={`Are you sure you want to remove all ${favorites.length} favorites? This action cannot be undone.`}
-        confirmLabel="Clear All"
-        onConfirm={() => {
-          favorites.forEach((track) => removeFavorite(track.id))
-          setIsDialogOpen(false)
-        }}
-      />
       <VStack align="stretch" gap={6}>
         <HStack justify="space-between">
           <Heading>My Favorites</Heading>
@@ -241,6 +222,19 @@ export default function FavoritesClient() {
           </HStack>
         )}
       </VStack>
+      <div className="absolute left-1/3 top-1/2">
+        <ConfirmDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title="Clear All Favorites"
+          description={`Are you sure you want to remove all ${favorites.length} favorites? This action cannot be undone.`}
+          confirmLabel="Clear All"
+          onConfirm={() => {
+            favorites.forEach((track) => removeFavorite(track.id))
+            setIsDialogOpen(false)
+          }}
+        />
+      </div>
     </Container>
   )
 }
