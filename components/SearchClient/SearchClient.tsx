@@ -17,11 +17,19 @@ import { LastFMSearchTrack, LastFMSearchAlbum } from '@/types/album'
 import TrackList from '../TrackList/TrackList'
 import AlbumSearchList from '../AlbumSearchList/AlbumSearchList'
 
-export default function SearchClient() {
-  const [query, setQuery] = useState('The Way I Am')
+export default function SearchClient({
+  initialQuery,
+  initialTracks,
+  initialAlbums,
+}: {
+  initialQuery: string
+  initialTracks: LastFMSearchTrack[]
+  initialAlbums: LastFMSearchAlbum[]
+}) {
+  const [query, setQuery] = useState(initialQuery)
   const [searchType, setSearchType] = useState<'tracks' | 'albums'>('tracks')
-  const [tracks, setTracks] = useState<LastFMSearchTrack[]>([])
-  const [albums, setAlbums] = useState<LastFMSearchAlbum[]>([])
+  const [tracks, setTracks] = useState(initialTracks)
+  const [albums, setAlbums] = useState(initialAlbums)
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(false)
@@ -35,11 +43,8 @@ export default function SearchClient() {
         return
       }
 
-      if (pageNum === 1) {
-        setLoading(true)
-      } else {
-        setLoadingMore(true)
-      }
+      if (pageNum === 1) setLoading(true)
+      else setLoadingMore(true)
 
       try {
         if (searchType === 'tracks') {
@@ -47,22 +52,18 @@ export default function SearchClient() {
             searchQuery,
             pageNum,
           )
-          if (pageNum === 1) {
-            setTracks(newTracks)
-          } else {
-            setTracks((prev) => [...prev, ...newTracks])
-          }
+          pageNum === 1
+            ? setTracks(newTracks)
+            : setTracks((prev) => [...prev, ...newTracks])
           setHasMore(pageNum < totalPages)
         } else {
           const { albums: newAlbums, totalPages } = await searchAlbums(
             searchQuery,
             pageNum,
           )
-          if (pageNum === 1) {
-            setAlbums(newAlbums)
-          } else {
-            setAlbums((prev) => [...prev, ...newAlbums])
-          }
+          pageNum === 1
+            ? setAlbums(newAlbums)
+            : setAlbums((prev) => [...prev, ...newAlbums])
           setHasMore(pageNum < totalPages)
         }
         setPage(pageNum)
@@ -88,12 +89,10 @@ export default function SearchClient() {
   )
 
   useEffect(() => {
-    debouncedSearch(query)
-  }, [query, debouncedSearch])
+    if (query !== initialQuery) debouncedSearch(query)
+  }, [query, debouncedSearch, initialQuery])
 
-  const loadMore = () => {
-    performSearch(query, page + 1)
-  }
+  const loadMore = () => performSearch(query, page + 1)
 
   return (
     <Container maxW="container.xl" py={10}>
