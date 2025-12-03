@@ -226,5 +226,3 @@ This is a showcase project. For any questions or suggestions, please open an iss
 This project is created for demonstration purposes.
 
 ---
-
-**Built with ❤️ using Next.js and Last.fm API**
