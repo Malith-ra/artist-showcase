@@ -14,8 +14,8 @@ import {
 } from '@chakra-ui/react'
 import { searchTracks, searchAlbums } from '@/lib/lastfm'
 import { LastFMSearchTrack, LastFMSearchAlbum } from '@/types/album'
-import TrackList from './TrackList'
-import AlbumSearchList from './AlbumSearchList'
+import TrackList from '../TrackList/TrackList'
+import AlbumSearchList from '../AlbumSearchList/AlbumSearchList'
 
 export default function SearchClient() {
   const [query, setQuery] = useState('The Way I Am')

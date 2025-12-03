@@ -1,5 +1,5 @@
 import { getAlbumInfo } from '@/lib/lastfm'
-import AlbumDetailClient from './AlbumDetailClient'
+import AlbumDetailClient from '../../components/AlbumDetailClient/AlbumDetailClient'
 import { notFound } from 'next/navigation'
 
 interface AlbumPageProps {

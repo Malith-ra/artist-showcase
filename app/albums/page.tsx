@@ -1,5 +1,5 @@
 import { getAlbumsByArtist } from '@/lib/lastfm'
-import AlbumsClient from './AlbumsClient'
+import AlbumsClient from '../../components/AlbumsClient/AlbumsClient'
 
 export default async function AlbumsPage() {
   const { albums: initialAlbums, totalPages: initialTotalPages } =

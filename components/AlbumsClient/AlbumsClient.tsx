@@ -3,9 +3,9 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Center, Container, Heading, Spinner, VStack } from '@chakra-ui/react'
 import debounce from 'lodash.debounce'
-import SearchBar from './SearchBar'
-import SortBar from './SortBar'
-import AlbumList from './AlbumList'
+import SearchBar from '../SearchBar/SearchBar'
+import SortBar from '../SortBar/SortBar'
+import AlbumList from '../AlbumList/AlbumList'
 import { getAlbumsByArtist } from '@/lib/lastfm'
 import { LastFMAlbum } from '@/types/album'
 

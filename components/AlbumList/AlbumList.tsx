@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { LastFMAlbum } from '@/types/album'
 import { useAlbumStore } from '@/store/albumStore'
-import AlbumCard from './AlbumCard'
+import AlbumCard from '../AlbumCard/AlbumCard'
 import { SimpleGrid, Spinner, Center, Button, VStack } from '@chakra-ui/react'
 import { getAlbumInfo } from '@/lib/lastfm'
 
