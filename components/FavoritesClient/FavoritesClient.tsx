@@ -14,14 +14,24 @@ import {
   Input,
   Table,
   IconButton,
+  DialogRoot,
+  DialogBackdrop,
+  DialogContent,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  DialogTitle,
+  DialogActionTrigger,
 } from '@chakra-ui/react'
 import { useFavoritesStore } from '@/store/favoritesStore'
 import { LuHeart, LuSearch } from 'react-icons/lu'
 import Link from 'next/link'
+import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog'
 
 export default function FavoritesClient() {
   const { favorites, removeFavorite } = useFavoritesStore()
   const [searchQuery, setSearchQuery] = useState('')
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   // Filter favorites based on search query
   const filteredFavorites = useMemo(() => {
@@ -65,6 +75,17 @@ export default function FavoritesClient() {
 
   return (
     <Container maxW="container.xl" py={10}>
+      <ConfirmDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        title="Clear All Favorites"
+        description={`Are you sure you want to remove all ${favorites.length} favorites? This action cannot be undone.`}
+        confirmLabel="Clear All"
+        onConfirm={() => {
+          favorites.forEach((track) => removeFavorite(track.id))
+          setIsDialogOpen(false)
+        }}
+      />
       <VStack align="stretch" gap={6}>
         <HStack justify="space-between">
           <Heading>My Favorites</Heading>
@@ -210,15 +231,7 @@ export default function FavoritesClient() {
         {favorites.length > 0 && (
           <HStack justify="flex-end">
             <Button
-              onClick={() => {
-                if (
-                  confirm(
-                    `Are you sure you want to remove all ${favorites.length} favorites?`,
-                  )
-                ) {
-                  favorites.forEach((track) => removeFavorite(track.id))
-                }
-              }}
+              onClick={() => setIsDialogOpen(true)}
               variant="outline"
               colorScheme="red"
               size="sm"
