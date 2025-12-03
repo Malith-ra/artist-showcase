@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import debounce from 'lodash.debounce'
 import {
   Container,
@@ -12,7 +12,7 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react'
-import { searchTracks, searchAlbums } from '@/lib/lastfm'
+import { useSearchTracks, useSearchAlbums } from '@/hooks/useApi'
 import { LastFMSearchTrack, LastFMSearchAlbum } from '@/types/album'
 import TrackList from '../TrackList/TrackList'
 import AlbumSearchList from '../AlbumSearchList/AlbumSearchList'
@@ -21,78 +21,56 @@ export default function SearchClient({
   initialQuery,
   initialTracks,
   initialAlbums,
-}: {
+}: Readonly<{
   initialQuery: string
   initialTracks: LastFMSearchTrack[]
   initialAlbums: LastFMSearchAlbum[]
-}) {
+}>) {
   const [query, setQuery] = useState(initialQuery)
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery)
   const [searchType, setSearchType] = useState<'tracks' | 'albums'>('tracks')
-  const [tracks, setTracks] = useState(initialTracks)
-  const [albums, setAlbums] = useState(initialAlbums)
-  const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(false)
-  const [loadingMore, setLoadingMore] = useState(false)
 
-  const performSearch = useCallback(
-    async (searchQuery: string, pageNum: number = 1) => {
-      if (!searchQuery.trim()) {
-        setTracks([])
-        setAlbums([])
-        return
-      }
+  // React Query hooks
+  const {
+    data: tracksData,
+    isLoading: isLoadingTracks,
+    isFetching: isFetchingTracks,
+  } = useSearchTracks(debouncedQuery, searchType === 'tracks' ? page : 1)
 
-      if (pageNum === 1) setLoading(true)
-      else setLoadingMore(true)
+  const {
+    data: albumsData,
+    isLoading: isLoadingAlbums,
+    isFetching: isFetchingAlbums,
+  } = useSearchAlbums(debouncedQuery, searchType === 'albums' ? page : 1)
 
-      try {
-        if (searchType === 'tracks') {
-          const { tracks: newTracks, totalPages } = await searchTracks(
-            searchQuery,
-            pageNum,
-          )
-          pageNum === 1
-            ? setTracks(newTracks)
-            : setTracks((prev) => [...prev, ...newTracks])
-          setHasMore(pageNum < totalPages)
-        } else {
-          const { albums: newAlbums, totalPages } = await searchAlbums(
-            searchQuery,
-            pageNum,
-          )
-          pageNum === 1
-            ? setAlbums(newAlbums)
-            : setAlbums((prev) => [...prev, ...newAlbums])
-          setHasMore(pageNum < totalPages)
-        }
-        setPage(pageNum)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-        setLoadingMore(false)
-      }
-    },
-    [searchType],
-  )
+  // Use initial data or fetched data
+  const tracks = tracksData?.tracks || (page === 1 ? initialTracks : [])
+  const albums = albumsData?.albums || (page === 1 ? initialAlbums : [])
+  const hasMoreTracks = tracksData ? page < tracksData.totalPages : false
+  const hasMoreAlbums = albumsData ? page < albumsData.totalPages : false
 
   const debouncedSearch = useMemo(
     () =>
       debounce((searchQuery: string) => {
-        if (searchQuery) {
-          setPage(1)
-          performSearch(searchQuery, 1)
-        }
+        setDebouncedQuery(searchQuery)
+        setPage(1)
       }, 1500),
-    [performSearch],
+    [],
   )
 
   useEffect(() => {
-    if (query !== initialQuery) debouncedSearch(query)
-  }, [query, debouncedSearch, initialQuery])
+    if (query !== debouncedQuery) {
+      debouncedSearch(query)
+    }
+  }, [query, debouncedQuery, debouncedSearch])
 
-  const loadMore = () => performSearch(query, page + 1)
+  const loadMore = () => setPage((prev) => prev + 1)
+
+  const loading = searchType === 'tracks' ? isLoadingTracks : isLoadingAlbums
+  const loadingMore =
+    searchType === 'tracks' ? isFetchingTracks : isFetchingAlbums
+  const hasMore = searchType === 'tracks' ? hasMoreTracks : hasMoreAlbums
 
   return (
     <Container maxW="container.xl" py={10}>
@@ -111,7 +89,8 @@ export default function SearchClient({
         <Tabs.Root
           value={searchType}
           onValueChange={(e) => {
-            setSearchType(e.value as 'tracks' | 'albums')
+            const newType = e.value as 'tracks' | 'albums'
+            setSearchType(newType)
             setPage(1)
           }}
           variant="enclosed"

@@ -1,7 +1,6 @@
 'use client'
 
-import { Input, InputElement, InputGroup } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons'
+import { Field, Input } from '@chakra-ui/react'
 
 export default function SearchBar({
   value,
@@ -11,19 +10,16 @@ export default function SearchBar({
   onChange: (v: string) => void
 }>) {
   return (
-    <div>
-      <InputGroup>
-        <InputElement placement="start">
-          <SearchIcon color="gray.400" />
-        </InputElement>
-      </InputGroup>
+    <Field.Root>
+      <Field.Label>Artist Name</Field.Label>
+
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search artist..."
-        size="lg"
         bg="white"
+        size="lg"
       />
-    </div>
+    </Field.Root>
   )
 }
